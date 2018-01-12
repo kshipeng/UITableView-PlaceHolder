@@ -1,2 +1,4 @@
 # UITableView-PlaceHolder
 零行代码tableView、collectionView无数据时展示占位图
+同时可以进行简单的自定义，或者完全自定义
+使用协议模式实现自定义方法
