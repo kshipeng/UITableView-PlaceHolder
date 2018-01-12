@@ -214,7 +214,7 @@ static NSString * const kSPTableViewPropertyInitFinish = @"kSPTableViewPropertyI
 /** 移除 KVO 监听 */
 - (void)freeNoDataViewIfNeeded {
     
-    if ([self.backgroundView isKindOfClass:[UIView class]] && ![self.backgroundView isKindOfClass:[UIActivityIndicatorView class]]) {
+    if ([self.backgroundView isKindOfClass:[UIView class]]) {
         [self.backgroundView removeObserver:self forKeyPath:kSPNoDataViewObserveKeyPath context:nil];
     }
 }
