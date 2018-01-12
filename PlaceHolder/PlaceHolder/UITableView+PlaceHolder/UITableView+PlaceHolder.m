@@ -100,7 +100,7 @@ NSString * const kSPNoDataViewObserveKeyPath = @"frame";
         }
         
         //  创建占位图
-        self.backgroundView = [self sp_defaultNoDataViewWithImage  :img message:msg color:color offsetY:offset];
+        self.backgroundView = [self sp_defaultNoDataViewWithImage:img message:msg color:color offsetY:offset];
     }
     
     
