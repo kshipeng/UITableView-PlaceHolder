@@ -57,15 +57,6 @@
 
 #pragma mark - 自定义 TableView 占位图
 
-///** 完全自定义 */
-//- (UIView *)sp_placeHolderView {
-//    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 100)];
-//    label.backgroundColor = [UIColor cyanColor];
-//    label.text = @"这是一个自定义的View";
-//    label.textAlignment = NSTextAlignmentCenter;
-//    return label;
-//}
-
 /** 只自定义图片 */
 - (UIImage *)sp_placeHolderImage {
     return [UIImage imageNamed:@"note_list_no_data"];

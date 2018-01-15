@@ -66,30 +66,6 @@
     return label;
 }
 
-/** 只自定义图片 */
-- (UIImage *)sp_placeHolderImage {
-    return [UIImage imageNamed:@"note_list_no_data"];
-}
-
-/** 只自定义文字 */
-- (NSString *)sp_placeHolderMessage {
-    return @"自定义的无数据提示";
-}
-
-/** 只自定义文字颜色 */
-- (UIColor *)sp_placeHolderMessageColor {
-    return [UIColor orangeColor];
-}
-
-/** 只自定义偏移量 */
-- (NSNumber *)sp_placeHolderViewCenterYOffset {
-    return @(0);
-}
-
-#pragma mark - 默认的占位图点击事件（完全自定义的view自己加点击事件就好了）
-- (void)sp_placeHolderViewClick {
-    NSLog(@"点击了重新加载");
-}
 
 
 - (void)didReceiveMemoryWarning {
