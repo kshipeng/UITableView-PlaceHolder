@@ -29,11 +29,11 @@
     });
     [_tableView addSubview:_refresh];
     
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0.0, 0.0, 375.0, 200.0)];
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0.0, 0.0, 375.0, 400.0)];
     label.backgroundColor = [UIColor redColor];
     label.text = @"我是表头";
     label.textAlignment = NSTextAlignmentCenter;
-    _tableView.tableHeaderView = label;
+    //_tableView.tableHeaderView = label;
 }
 
 - (void)pullToRefresh {
@@ -41,7 +41,10 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [_refresh endRefreshing];
         [self.tableView reloadData];
+        _tableView.loading = _count%2 ? 0:10;
+        
     });
+    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -54,14 +57,14 @@
 
 #pragma mark - 自定义 TableView 占位图
 
-/** 完全自定义 */
-- (UIView *)sp_placeHolderView {
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 100)];
-    label.backgroundColor = [UIColor cyanColor];
-    label.text = @"这是一个自定义的View";
-    label.textAlignment = NSTextAlignmentCenter;
-    return label;
-}
+///** 完全自定义 */
+//- (UIView *)sp_placeHolderView {
+//    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 100)];
+//    label.backgroundColor = [UIColor cyanColor];
+//    label.text = @"这是一个自定义的View";
+//    label.textAlignment = NSTextAlignmentCenter;
+//    return label;
+//}
 
 /** 只自定义图片 */
 - (UIImage *)sp_placeHolderImage {

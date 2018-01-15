@@ -91,8 +91,8 @@
 		3D7EFE532008A64E00809B3B /* UICollectionView+PlaceHolder */ = {
 			isa = PBXGroup;
 			children = (
-				3D7EFE542008A64E00809B3B /* UICollectionView+PlaceHolder.m */,
 				3D7EFE552008A64E00809B3B /* UICollectionView+PlaceHolder.h */,
+				3D7EFE542008A64E00809B3B /* UICollectionView+PlaceHolder.m */,
 			);
 			path = "UICollectionView+PlaceHolder";
 			sourceTree = "<group>";

@@ -187,6 +187,50 @@ NSString * const kSPNoDataViewObserveKeyPath1 = @"frame";
     }
 }
 
+#pragma mark - 加载提示
+static NSString * const kSPTableViewLoading = @"kSPTableViewLoading";
+static NSString * const kSPTableViewLoadingView = @"kSPTableViewLoadingView";
+
+- (void)setLoading:(BOOL)loading {
+    objc_setAssociatedObject(self, &kSPTableViewLoading, @(loading), OBJC_ASSOCIATION_ASSIGN);
+    [self addActivityIndicatorView];
+}
+
+- (BOOL)isLoading {
+    id obj = objc_getAssociatedObject(self, &kSPTableViewLoading);
+    return [obj boolValue];
+}
+
+- (void)setActivityView:(UIActivityIndicatorView *)activityView {
+    objc_setAssociatedObject(self, &kSPTableViewLoadingView, activityView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UIActivityIndicatorView *)activityView {
+    return objc_getAssociatedObject(self, &kSPTableViewLoadingView);
+}
+
+- (void)addActivityIndicatorView {
+    CGFloat sW = self.bounds.size.width;
+    CGFloat cX = sW / 2;
+    CGFloat offset = 0.0;
+    //  获取偏移量
+    if ([self.delegate respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
+        offset = [[self.delegate performSelector:@selector(sp_placeHolderViewCenterYOffset)] floatValue];
+    }
+    CGFloat cY = self.bounds.size.height * (1.0 - 0.618) + offset;
+    if (self.isLoading) {
+        self.activityView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        self.activityView.hidesWhenStopped = YES;
+        self.activityView.center = CGPointMake(cX, cY + offset);
+        
+        [self addSubview:self.activityView];
+        [self.activityView startAnimating];
+    }else {
+        [self.activityView stopAnimating];
+    }
+    
+}
+
 
 #pragma mark - 属性
 

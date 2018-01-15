@@ -20,4 +20,6 @@
 
 @interface UICollectionView (PlaceHolder)
 
+@property (nonatomic, assign, getter=isLoading) BOOL loading;
+
 @end

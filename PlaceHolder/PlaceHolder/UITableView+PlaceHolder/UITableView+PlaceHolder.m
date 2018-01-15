@@ -83,19 +83,19 @@ NSString * const kSPNoDataViewObserveKeyPath = @"frame";
         CGFloat  offset = 0;
         
         //  获取图片
-        if ([self.delegate    respondsToSelector:@selector(sp_placeHolderImage)]) {
+        if ([self.delegate respondsToSelector:@selector(sp_placeHolderImage)]) {
             img = [self.delegate performSelector:@selector(sp_placeHolderImage)];
         }
         //  获取文字
-        if ([self.delegate    respondsToSelector:@selector(sp_placeHolderMessage)]) {
+        if ([self.delegate respondsToSelector:@selector(sp_placeHolderMessage)]) {
             msg = [self.delegate performSelector:@selector(sp_placeHolderMessage)];
         }
         //  获取颜色
-        if ([self.delegate      respondsToSelector:@selector(sp_placeHolderMessageColor)]) {
+        if ([self.delegate respondsToSelector:@selector(sp_placeHolderMessageColor)]) {
             color = [self.delegate performSelector:@selector(sp_placeHolderMessageColor)];
         }
         //  获取偏移量
-        if ([self.delegate        respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
+        if ([self.delegate respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
             offset = [[self.delegate performSelector:@selector(sp_placeHolderViewCenterYOffset)] floatValue];
         }
         
@@ -120,13 +120,9 @@ NSString * const kSPNoDataViewObserveKeyPath = @"frame";
     
     //  图片
     UIImageView *imgView = [[UIImageView alloc] init];
-    imgView.image        = image;
-    if (self.tableHeaderView) {
-        imgView.frame        = CGRectMake(cX - iW / 2, cY - iH / 2 + CGRectGetHeight(self.tableHeaderView.frame) / 2, iW, iH);
-        
-    }else {
-        imgView.frame        = CGRectMake(cX - iW / 2, cY - iH / 2, iW, iH);
-    }
+    imgView.image = image;
+    imgView.frame = CGRectMake(cX - iW / 2, cY + CGRectGetHeight(self.tableHeaderView.frame) * 0.618 - iH / 2.0, iW, iH);
+    
     //  文字
     UILabel *label       = [[UILabel alloc] init];
     label.font           = [UIFont systemFontOfSize:17];
@@ -159,17 +155,14 @@ NSString * const kSPNoDataViewObserveKeyPath = @"frame";
     CGFloat cX = sW / 2;
     CGFloat offset = 0.0;
     //  获取偏移量
-    if ([self.delegate        respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
+    if ([self.delegate respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
         offset = [[self.delegate performSelector:@selector(sp_placeHolderViewCenterYOffset)] floatValue];
     }
-    CGFloat cY = self.bounds.size.height * (1 - 0.618) + offset;
+    CGFloat cY = self.bounds.size.height * (1.0 - 0.618) + offset;
     CGFloat vW = view.frame.size.width;
     CGFloat vH = view.frame.size.height;
-    if (self.tableHeaderView) {
-        view.frame = CGRectMake(cX-vW / 2, cY  - vH / 2 + CGRectGetHeight(self.tableHeaderView.frame) / 2, vW, vH);
-    }else {
-        view.frame = CGRectMake(cX-vW / 2, cY  - vH / 2, vW, vH);
-    }
+    view.frame = CGRectMake(cX-vW / 2, cY + CGRectGetHeight(self.tableHeaderView.frame) * 0.618 - vH / 2.0, vW, vH);
+
     //  视图
     UIView *bgview   = [[UIView alloc] init];
     [bgview addSubview:view];
@@ -192,6 +185,49 @@ NSString * const kSPNoDataViewObserveKeyPath = @"frame";
             self.backgroundView.frame = frame;
         }
     }
+}
+#pragma mark - 加载提示
+static NSString * const kSPTableViewLoading = @"kSPTableViewLoading";
+static NSString * const kSPTableViewLoadingView = @"kSPTableViewLoadingView";
+
+- (void)setLoading:(BOOL)loading {
+    objc_setAssociatedObject(self, &kSPTableViewLoading, @(loading), OBJC_ASSOCIATION_ASSIGN);
+    [self addActivityIndicatorView];
+}
+
+- (BOOL)isLoading {
+    id obj = objc_getAssociatedObject(self, &kSPTableViewLoading);
+    return [obj boolValue];
+}
+
+- (void)setActivityView:(UIActivityIndicatorView *)activityView {
+    objc_setAssociatedObject(self, &kSPTableViewLoadingView, activityView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UIActivityIndicatorView *)activityView {
+    return objc_getAssociatedObject(self, &kSPTableViewLoadingView);
+}
+
+- (void)addActivityIndicatorView {
+    CGFloat sW = self.bounds.size.width;
+    CGFloat cX = sW / 2;
+    CGFloat offset = 0.0;
+    //  获取偏移量
+    if ([self.delegate respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
+        offset = [[self.delegate performSelector:@selector(sp_placeHolderViewCenterYOffset)] floatValue];
+    }
+    CGFloat cY = self.bounds.size.height * (1.0 - 0.618) + offset;
+    if (self.isLoading) {
+        self.activityView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        self.activityView.hidesWhenStopped = YES;
+        self.activityView.center = CGPointMake(cX, cY+ CGRectGetHeight(self.tableHeaderView.frame) * 0.618 + offset);
+        
+        [self addSubview:self.activityView];
+        [self.activityView startAnimating];
+    }else {
+        [self.activityView stopAnimating];
+    }
+    
 }
 
 

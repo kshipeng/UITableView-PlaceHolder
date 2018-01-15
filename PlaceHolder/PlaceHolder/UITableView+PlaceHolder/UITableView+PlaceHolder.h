@@ -22,5 +22,6 @@ extern NSString * const kSPNoDataViewObserveKeyPath;
 
 @interface UITableView (PlaceHolder)
 
+@property (nonatomic, assign, getter=isLoading) BOOL loading;
 
 @end
