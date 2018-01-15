@@ -72,37 +72,62 @@ NSString * const kSPNoDataViewObserveKeyPath = @"frame";
     
     //  自定义了占位图
     if ([self.delegate respondsToSelector:@selector(sp_placeHolderView)]) {
-        
         self.backgroundView = [self sp_customNoDataViewWithView:[self.delegate performSelector:@selector(sp_placeHolderView)]];
-        
+        [SPPlaceHolderView setPlaceHolder:[self.delegate performSelector:@selector(sp_placeHolderView)]];
     }else {
-        //  使用自带的
-        UIImage  *img   = nil;
-        NSString *msg   = @"暂无数据";
-        UIColor  *color = [UIColor lightGrayColor];
-        CGFloat  offset = 0;
+        if ([SPPlaceHolderView placeHolder] &&
+            (   ![self.delegate respondsToSelector:@selector(sp_placeHolderImage)]
+             || ![self.delegate respondsToSelector:@selector(sp_placeHolderMessage)]
+             || ![self.delegate respondsToSelector:@selector(sp_placeHolderMessageColor)])) {
+            self.backgroundView = [self sp_customNoDataViewWithView:[SPPlaceHolderView placeHolder]];
+        }else {
+            //  使用自带的
+            UIImage  *img   = nil;
+            NSString *msg   = @"暂无数据";
+            UIColor  *color = [UIColor lightGrayColor];
+            CGFloat  offset = 0;
+            //  获取图片
+            if ([self.delegate respondsToSelector:@selector(sp_placeHolderImage)]) {
+                img = [self.delegate performSelector:@selector(sp_placeHolderImage)];
+                [SPPlaceHolderView setImage:img];
+            }else {
+                if ([SPPlaceHolderView image]) {
+                    img = [SPPlaceHolderView image];
+                }
+            }
+            //  获取文字
+            if ([self.delegate respondsToSelector:@selector(sp_placeHolderMessage)]) {
+                msg = [self.delegate performSelector:@selector(sp_placeHolderMessage)];
+                [SPPlaceHolderView setMessage:msg];
+            }else {
+                if ([SPPlaceHolderView message]) {
+                    msg = [SPPlaceHolderView message];
+                }
+            }
+            //  获取颜色
+            if ([self.delegate respondsToSelector:@selector(sp_placeHolderMessageColor)]) {
+                color = [self.delegate performSelector:@selector(sp_placeHolderMessageColor)];
+                [SPPlaceHolderView setColor:color];
+            }else {
+                if ([SPPlaceHolderView color]) {
+                    color = [SPPlaceHolderView color];
+                }
+            }
+            //  获取偏移量
+            if ([self.delegate respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
+                offset = [[self.delegate performSelector:@selector(sp_placeHolderViewCenterYOffset)] floatValue];
+                [SPPlaceHolderView setCenterYOffset:offset];
+            }else {
+                if ([SPPlaceHolderView centerYOffset]) {
+                    offset = [SPPlaceHolderView centerYOffset];
+                }
+            }
+            
+            //  创建占位图
+            self.backgroundView = [self sp_defaultNoDataViewWithImage:img message:msg color:color offsetY:offset];
+        }
         
-        //  获取图片
-        if ([self.delegate respondsToSelector:@selector(sp_placeHolderImage)]) {
-            img = [self.delegate performSelector:@selector(sp_placeHolderImage)];
-        }
-        //  获取文字
-        if ([self.delegate respondsToSelector:@selector(sp_placeHolderMessage)]) {
-            msg = [self.delegate performSelector:@selector(sp_placeHolderMessage)];
-        }
-        //  获取颜色
-        if ([self.delegate respondsToSelector:@selector(sp_placeHolderMessageColor)]) {
-            color = [self.delegate performSelector:@selector(sp_placeHolderMessageColor)];
-        }
-        //  获取偏移量
-        if ([self.delegate respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
-            offset = [[self.delegate performSelector:@selector(sp_placeHolderViewCenterYOffset)] floatValue];
-        }
-        
-        //  创建占位图
-        self.backgroundView = [self sp_defaultNoDataViewWithImage:img message:msg color:color offsetY:offset];
     }
-    
     
     //  实现跟随 TableView 滚动
     [self.backgroundView addObserver:self forKeyPath:kSPNoDataViewObserveKeyPath options:NSKeyValueObservingOptionNew context:nil];
@@ -261,3 +286,66 @@ static NSString * const kSPTableViewPropertyInitFinish = @"kSPTableViewPropertyI
     //NSLog(@"TableView + PlaceHolder 视图正常销毁");
 }
 @end
+
+
+@interface SPPlaceHolderView()
+
+@property (nonatomic, strong) UIView *palceHolderView;
+@property (nonatomic, strong) UIImage *placeHolderImage;
+@property (nonatomic, strong) NSString *placeHolderMessage;
+@property (nonatomic, strong) UIColor *placeHolderMessageColor;
+@property (nonatomic, assign) CGFloat placeHolderViewCenterYOffset;
+
+@end
+
+@implementation SPPlaceHolderView
+
++ (instancetype)shareInstance {
+    static SPPlaceHolderView *place;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        place = [[self alloc]init];
+        place.placeHolderViewCenterYOffset = 0.0;
+    });
+    return place;
+}
+
++ (void)setPlaceHolder:(UIView *)view {
+    [SPPlaceHolderView shareInstance].palceHolderView = view;
+}
++ (UIView *)placeHolder {
+    return [SPPlaceHolderView shareInstance].palceHolderView;
+}
+
++ (void)setImage:(UIImage *)image {
+    [SPPlaceHolderView shareInstance].placeHolderImage = image;
+}
++ (UIImage *)image {
+    return [SPPlaceHolderView shareInstance].placeHolderImage;
+}
+
++ (void)setMessage:(NSString *)message {
+    [SPPlaceHolderView shareInstance].placeHolderMessage = message;
+}
++ (NSString *)message {
+    return [SPPlaceHolderView shareInstance].placeHolderMessage;
+}
+
++ (void)setColor:(UIColor *)color {
+    [SPPlaceHolderView shareInstance].placeHolderMessageColor = color;
+}
++ (UIColor *)color {
+    return [SPPlaceHolderView shareInstance].placeHolderMessageColor;
+}
+
++ (void)setCenterYOffset:(CGFloat)y {
+    [SPPlaceHolderView shareInstance].placeHolderViewCenterYOffset = y;
+}
++ (CGFloat)centerYOffset {
+    return [SPPlaceHolderView shareInstance].placeHolderViewCenterYOffset;
+}
+
+
+
+@end
+

@@ -1,21 +1,21 @@
 //
-//  ViewController.m
+//  FirstViewController.m
 //  PlaceHolder
 //
-//  Created by 康世朋 on 2018/1/12.
+//  Created by 康世朋 on 2018/1/15.
 //  Copyright © 2018年 康世朋. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "FirstViewController.h"
 #import "UITableView+PlaceHolder.h"
 
-@interface ViewController ()<UITableViewDelegate, UITableViewDataSource, SPTableViewDelegate>
+@interface FirstViewController ()<UITableViewDelegate, UITableViewDataSource, SPTableViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UIRefreshControl *refresh;
 @property (nonatomic, assign) NSInteger count;
 @end
 
-@implementation ViewController
+@implementation FirstViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -29,7 +29,7 @@
     });
     [_tableView addSubview:_refresh];
     
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0.0, 0.0, 375.0, 200.0)];
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0.0, 0.0, 375.0, 300.0)];
     label.backgroundColor = [UIColor redColor];
     label.text = @"我是表头";
     label.textAlignment = NSTextAlignmentCenter;
@@ -57,14 +57,14 @@
 
 #pragma mark - 自定义 TableView 占位图
 
-/** 完全自定义 */
-- (UIView *)sp_placeHolderView {
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 100)];
-    label.backgroundColor = [UIColor cyanColor];
-    label.text = @"这是一个自定义的View";
-    label.textAlignment = NSTextAlignmentCenter;
-    return label;
-}
+///** 完全自定义 */
+//- (UIView *)sp_placeHolderView {
+//    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 100)];
+//    label.backgroundColor = [UIColor cyanColor];
+//    label.text = @"这是一个自定义的View";
+//    label.textAlignment = NSTextAlignmentCenter;
+//    return label;
+//}
 
 /** 只自定义图片 */
 - (UIImage *)sp_placeHolderImage {
@@ -91,11 +91,19 @@
     NSLog(@"点击了重新加载");
 }
 
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
 
 @end
