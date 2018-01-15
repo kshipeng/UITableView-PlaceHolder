@@ -23,3 +23,23 @@
 @property (nonatomic, assign, getter=isLoading) BOOL loading;
 
 @end
+
+
+@interface SPPlaceHolder : NSObject
+
++ (void)setPlaceHolder:(UIView *)view;
++ (UIView *)placeHolder;
+
++ (void)setImage:(UIImage *)image;
++ (UIImage *)image;
+
++ (void)setMessage:(NSString *)message;
++ (NSString *)message;
+
++ (void)setColor:(UIColor *)color;
++ (UIColor *)color;
+
++ (void)setCenterYOffset:(CGFloat)y;
++ (CGFloat)centerYOffset;
+
+@end

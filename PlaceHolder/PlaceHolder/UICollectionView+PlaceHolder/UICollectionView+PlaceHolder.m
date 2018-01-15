@@ -74,36 +74,61 @@ NSString * const kSPNoDataViewObserveKeyPath1 = @"frame";
     if ([self.delegate respondsToSelector:@selector(sp_placeHolderView)]) {
         
         self.backgroundView = [self sp_customNoDataViewWithView:[self.delegate performSelector:@selector(sp_placeHolderView)]];
+        [SPPlaceHolder setPlaceHolder:[self.delegate performSelector:@selector(sp_placeHolderView)]];
         
     }else {
-        //  使用自带的
-        UIImage  *img   = nil;
-        NSString *msg   = @"暂无数据";
-        UIColor  *color = [UIColor lightGrayColor];
-        CGFloat  offset = 0;
-        
-        //  获取图片
-        if ([self.delegate    respondsToSelector:@selector(sp_placeHolderImage)]) {
-            img = [self.delegate performSelector:@selector(sp_placeHolderImage)];
+        if ([SPPlaceHolder placeHolder] &&
+            (   ![self.delegate respondsToSelector:@selector(sp_placeHolderImage)]
+             || ![self.delegate respondsToSelector:@selector(sp_placeHolderMessage)]
+             || ![self.delegate respondsToSelector:@selector(sp_placeHolderMessageColor)])) {
+            self.backgroundView = [self sp_customNoDataViewWithView:[SPPlaceHolder placeHolder]];
+        }else {
+            //  使用自带的
+            UIImage  *img   = nil;
+            NSString *msg   = @"暂无数据";
+            UIColor  *color = [UIColor lightGrayColor];
+            CGFloat  offset = 0;
+            //  获取图片
+            if ([self.delegate respondsToSelector:@selector(sp_placeHolderImage)]) {
+                img = [self.delegate performSelector:@selector(sp_placeHolderImage)];
+                [SPPlaceHolder setImage:img];
+            }else {
+                if ([SPPlaceHolder image]) {
+                    img = [SPPlaceHolder image];
+                }
+            }
+            //  获取文字
+            if ([self.delegate respondsToSelector:@selector(sp_placeHolderMessage)]) {
+                msg = [self.delegate performSelector:@selector(sp_placeHolderMessage)];
+                [SPPlaceHolder setMessage:msg];
+            }else {
+                if ([SPPlaceHolder message]) {
+                    msg = [SPPlaceHolder message];
+                }
+            }
+            //  获取颜色
+            if ([self.delegate respondsToSelector:@selector(sp_placeHolderMessageColor)]) {
+                color = [self.delegate performSelector:@selector(sp_placeHolderMessageColor)];
+                [SPPlaceHolder setColor:color];
+            }else {
+                if ([SPPlaceHolder color]) {
+                    color = [SPPlaceHolder color];
+                }
+            }
+            //  获取偏移量
+            if ([self.delegate respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
+                offset = [[self.delegate performSelector:@selector(sp_placeHolderViewCenterYOffset)] floatValue];
+                [SPPlaceHolder setCenterYOffset:offset];
+            }else {
+                if ([SPPlaceHolder centerYOffset]) {
+                    offset = [SPPlaceHolder centerYOffset];
+                }
+            }
+            
+            //  创建占位图
+            self.backgroundView = [self sp_defaultNoDataViewWithImage:img message:msg color:color offsetY:offset];
         }
-        //  获取文字
-        if ([self.delegate    respondsToSelector:@selector(sp_placeHolderMessage)]) {
-            msg = [self.delegate performSelector:@selector(sp_placeHolderMessage)];
-        }
-        //  获取颜色
-        if ([self.delegate      respondsToSelector:@selector(sp_placeHolderMessageColor)]) {
-            color = [self.delegate performSelector:@selector(sp_placeHolderMessageColor)];
-        }
-        //  获取偏移量
-        if ([self.delegate        respondsToSelector:@selector(sp_placeHolderViewCenterYOffset)]) {
-            offset = [[self.delegate performSelector:@selector(sp_placeHolderViewCenterYOffset)] floatValue];
-        }
-        
-        //  创建占位图
-        self.backgroundView = [self sp_defaultNoDataViewWithImage  :img message:msg color:color offsetY:offset];
     }
-    
-    
     //  实现跟随 TableView 滚动
     [self.backgroundView addObserver:self forKeyPath:kSPNoDataViewObserveKeyPath1 options:NSKeyValueObservingOptionNew context:nil];
 }
@@ -260,6 +285,66 @@ static NSString * const kSPCollectionViewPropertyInitFinish = @"kSPCollectionVie
     [self freeNoDataViewIfNeeded];
     [self sp_dealloc];
     //NSLog(@"CollectionView + PlaceHolder 视图正常销毁");
+}
+
+@end
+
+
+@interface SPPlaceHolder()
+
+@property (nonatomic, strong) UIView *palceHolderView;
+@property (nonatomic, strong) UIImage *placeHolderImage;
+@property (nonatomic, strong) NSString *placeHolderMessage;
+@property (nonatomic, strong) UIColor *placeHolderMessageColor;
+@property (nonatomic, assign) CGFloat placeHolderViewCenterYOffset;
+
+@end
+
+@implementation SPPlaceHolder
+
++ (instancetype)shareInstance {
+    static SPPlaceHolder *place;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        place = [[self alloc]init];
+        place.placeHolderViewCenterYOffset = 0.0;
+    });
+    return place;
+}
+
++ (void)setPlaceHolder:(UIView *)view {
+    [SPPlaceHolder shareInstance].palceHolderView = view;
+}
++ (UIView *)placeHolder {
+    return [SPPlaceHolder shareInstance].palceHolderView;
+}
+
++ (void)setImage:(UIImage *)image {
+    [SPPlaceHolder shareInstance].placeHolderImage = image;
+}
++ (UIImage *)image {
+    return [SPPlaceHolder shareInstance].placeHolderImage;
+}
+
++ (void)setMessage:(NSString *)message {
+    [SPPlaceHolder shareInstance].placeHolderMessage = message;
+}
++ (NSString *)message {
+    return [SPPlaceHolder shareInstance].placeHolderMessage;
+}
+
++ (void)setColor:(UIColor *)color {
+    [SPPlaceHolder shareInstance].placeHolderMessageColor = color;
+}
++ (UIColor *)color {
+    return [SPPlaceHolder shareInstance].placeHolderMessageColor;
+}
+
++ (void)setCenterYOffset:(CGFloat)y {
+    [SPPlaceHolder shareInstance].placeHolderViewCenterYOffset = y;
+}
++ (CGFloat)centerYOffset {
+    return [SPPlaceHolder shareInstance].placeHolderViewCenterYOffset;
 }
 
 @end
